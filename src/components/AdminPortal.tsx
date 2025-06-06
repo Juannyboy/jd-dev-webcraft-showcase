@@ -6,17 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useData } from '@/contexts/DataContext';
-
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  liveUrl?: string;
-  codeUrl?: string;
-  tags: string[];
-  type: 'web-app' | 'website' | 'web-game';
-}
+import { Project } from '@/hooks/useProjects';
 
 const AdminPortal = () => {
   const { projects, contactInfo, addProject, updateProject, deleteProject, updateContactInfo } = useData();
@@ -25,52 +15,63 @@ const AdminPortal = () => {
   const [showContactEdit, setShowContactEdit] = useState(false);
   const [contactFormData, setContactFormData] = useState(contactInfo);
 
-  const emptyProject: Project = {
-    id: '',
+  const emptyProject = {
     title: '',
     description: '',
     image: '',
-    liveUrl: '',
-    codeUrl: '',
-    tags: [],
-    type: 'web-app'
+    live_url: '',
+    github_url: '',
+    technologies: [],
+    category: 'web-app' as const,
+    featured: false
   };
 
-  const handleSave = (project: Project) => {
-    if (isCreating) {
-      const newProject = { ...project, id: Date.now().toString() };
-      addProject(newProject);
-      setIsCreating(false);
-    } else {
-      updateProject(project);
-      setEditingProject(null);
+  const handleSave = async (project: Project | typeof emptyProject) => {
+    try {
+      if (isCreating) {
+        await addProject(project);
+        setIsCreating(false);
+      } else {
+        await updateProject(project as Project);
+        setEditingProject(null);
+      }
+    } catch (error) {
+      console.error('Error saving project:', error);
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
-      deleteProject(id);
+      try {
+        await deleteProject(id);
+      } catch (error) {
+        console.error('Error deleting project:', error);
+      }
     }
   };
 
-  const handleContactSave = () => {
-    updateContactInfo(contactFormData);
-    setShowContactEdit(false);
+  const handleContactSave = async () => {
+    try {
+      await updateContactInfo(contactFormData);
+      setShowContactEdit(false);
+    } catch (error) {
+      console.error('Error updating contact info:', error);
+    }
   };
 
   const ProjectForm = ({ project, onSave, onCancel }: { 
-    project: Project, 
-    onSave: (project: Project) => void, 
+    project: Project | typeof emptyProject, 
+    onSave: (project: Project | typeof emptyProject) => void, 
     onCancel: () => void 
   }) => {
     const [formData, setFormData] = useState(project);
-    const [tagsInput, setTagsInput] = useState(project.tags.join(', '));
+    const [tagsInput, setTagsInput] = useState(project.technologies.join(', '));
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
       const updatedProject = {
         ...formData,
-        tags: tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag)
+        technologies: tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag)
       };
       onSave(updatedProject);
     };
@@ -115,17 +116,26 @@ const AdminPortal = () => {
             <div>
               <label className="block text-sm font-medium mb-1">Live URL (optional)</label>
               <Input
-                value={formData.liveUrl}
-                onChange={(e) => setFormData({ ...formData, liveUrl: e.target.value })}
+                value={formData.live_url || ''}
+                onChange={(e) => setFormData({ ...formData, live_url: e.target.value })}
                 placeholder="https://example.com"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">GitHub URL (optional)</label>
+              <Input
+                value={formData.github_url || ''}
+                onChange={(e) => setFormData({ ...formData, github_url: e.target.value })}
+                placeholder="https://github.com/username/repo"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-1">Project Type</label>
               <select
-                value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value as Project['type'] })}
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value as Project['category'] })}
                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="web-app">Web Application</option>
@@ -135,12 +145,23 @@ const AdminPortal = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Tags (comma separated)</label>
+              <label className="block text-sm font-medium mb-1">Technologies (comma separated)</label>
               <Input
                 value={tagsInput}
                 onChange={(e) => setTagsInput(e.target.value)}
                 placeholder="React, TypeScript, Tailwind"
               />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="featured"
+                checked={formData.featured}
+                onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                className="rounded"
+              />
+              <label htmlFor="featured" className="text-sm font-medium">Featured Project</label>
             </div>
 
             <div className="flex gap-2 pt-4">
@@ -201,7 +222,7 @@ const AdminPortal = () => {
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-bold text-lg">{project.title}</h3>
                   <Badge variant="outline" className="text-xs">
-                    {project.type}
+                    {project.category}
                   </Badge>
                 </div>
                 
@@ -210,24 +231,24 @@ const AdminPortal = () => {
                 </p>
 
                 <div className="flex flex-wrap gap-1 mb-4">
-                  {project.tags.slice(0, 3).map((tag) => (
+                  {project.technologies.slice(0, 3).map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-xs">
                       {tag}
                     </Badge>
                   ))}
-                  {project.tags.length > 3 && (
+                  {project.technologies.length > 3 && (
                     <Badge variant="secondary" className="text-xs">
-                      +{project.tags.length - 3}
+                      +{project.technologies.length - 3}
                     </Badge>
                   )}
                 </div>
 
                 <div className="flex gap-2">
-                  {project.liveUrl && (
+                  {project.live_url && (
                     <Button 
                       size="sm" 
                       variant="outline" 
-                      onClick={() => window.open(project.liveUrl, '_blank')}
+                      onClick={() => window.open(project.live_url, '_blank')}
                     >
                       <ExternalLink className="w-3 h-3" />
                     </Button>

@@ -19,7 +19,7 @@ export const useContactInfo = () => {
         .single();
 
       if (error) throw error;
-      return data.setting_value as ContactInfo;
+      return data.setting_value as unknown as ContactInfo;
     },
   });
 };
