@@ -3,17 +3,7 @@ import React, { useState } from 'react';
 import { ExternalLink, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  liveUrl?: string;
-  codeUrl?: string;
-  tags: string[];
-  type: 'web-app' | 'website' | 'web-game';
-}
+import { Project } from '@/hooks/useProjects';
 
 interface ProjectCardProps {
   project: Project;
@@ -57,10 +47,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
           isHovered ? 'opacity-100' : 'opacity-0'
         }`}>
-          {project.liveUrl && (
+          {project.live_url && (
             <Button 
               className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              onClick={() => window.open(project.liveUrl, '_blank')}
+              onClick={() => window.open(project.live_url, '_blank')}
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               Live Preview
@@ -70,8 +60,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
         {/* Project type badge */}
         <div className="absolute top-4 right-4">
-          <Badge variant="secondary" className={`${typeColors[project.type]} glass`}>
-            {typeLabels[project.type]}
+          <Badge variant="secondary" className={`${typeColors[project.category]} glass`}>
+            {typeLabels[project.category]}
           </Badge>
         </div>
       </div>
@@ -87,7 +77,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
-          {project.tags.map((tag) => (
+          {project.technologies.map((tag) => (
             <Badge key={tag} variant="outline" className="text-xs border-primary/20 hover:border-primary/40 transition-colors">
               {tag}
             </Badge>
@@ -96,12 +86,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
         {/* Action button - only live preview */}
         <div className="flex gap-2">
-          {project.liveUrl && (
+          {project.live_url && (
             <Button 
               variant="outline" 
               size="sm"
               className="w-full border-primary/30 hover:bg-primary/5"
-              onClick={() => window.open(project.liveUrl, '_blank')}
+              onClick={() => window.open(project.live_url, '_blank')}
             >
               <Monitor className="w-4 h-4 mr-1" />
               View Live

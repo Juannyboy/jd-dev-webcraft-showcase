@@ -1,13 +1,34 @@
 
 import React from 'react';
 import ProjectCard from '@/components/ProjectCard';
-import { useData } from '@/contexts/DataContext';
+import { useProjectsByCategory } from '@/hooks/useProjects';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Code } from 'lucide-react';
 
 const WebApplications = () => {
-  const { projects } = useData();
-  const webAppProjects = projects.filter(project => project.type === 'web-app');
+  const { data: webAppProjects = [], isLoading, error } = useProjectsByCategory('web-app');
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading web applications...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Error loading projects</p>
+          <Link to="/" className="text-primary hover:underline">Return to Home</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">

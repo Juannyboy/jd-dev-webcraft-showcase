@@ -9,27 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      admin_users: {
-        Row: {
-          created_at: string
-          id: string
-          password_hash: string
-          username: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          password_hash: string
-          username: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          password_hash?: string
-          username?: string
-        }
-        Relationships: []
-      }
       contact_submissions: {
         Row: {
           created_at: string
@@ -62,10 +41,11 @@ export type Database = {
           category: string
           created_at: string
           description: string
-          github: string | null
+          featured: boolean
+          github_url: string | null
           id: string
           image: string
-          link: string | null
+          live_url: string | null
           technologies: string[]
           title: string
           updated_at: string
@@ -74,10 +54,11 @@ export type Database = {
           category: string
           created_at?: string
           description: string
-          github?: string | null
+          featured?: boolean
+          github_url?: string | null
           id?: string
           image: string
-          link?: string | null
+          live_url?: string | null
           technologies?: string[]
           title: string
           updated_at?: string
@@ -86,10 +67,11 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string
-          github?: string | null
+          featured?: boolean
+          github_url?: string | null
           id?: string
           image?: string
-          link?: string | null
+          live_url?: string | null
           technologies?: string[]
           title?: string
           updated_at?: string
@@ -98,8 +80,10 @@ export type Database = {
       }
       testimonials: {
         Row: {
+          company: string | null
           content: string
           created_at: string
+          featured: boolean
           id: string
           image: string
           name: string
@@ -108,8 +92,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          company?: string | null
           content: string
           created_at?: string
+          featured?: boolean
           id?: string
           image: string
           name: string
@@ -118,8 +104,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          company?: string | null
           content?: string
           created_at?: string
+          featured?: boolean
           id?: string
           image?: string
           name?: string
@@ -129,23 +117,23 @@ export type Database = {
         }
         Relationships: []
       }
-      website_content: {
+      website_settings: {
         Row: {
-          content: Json
           id: string
-          section: string
+          setting_key: string
+          setting_value: Json
           updated_at: string
         }
         Insert: {
-          content: Json
           id?: string
-          section: string
+          setting_key: string
+          setting_value: Json
           updated_at?: string
         }
         Update: {
-          content?: Json
           id?: string
-          section?: string
+          setting_key?: string
+          setting_value?: Json
           updated_at?: string
         }
         Relationships: []

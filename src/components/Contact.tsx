@@ -5,42 +5,29 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useData } from '@/contexts/DataContext';
+import { useContactSubmission } from '@/hooks/useContactSubmission';
 
 const Contact = () => {
   const { contactInfo } = useData();
+  const contactMutation = useContactSubmission();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
-    projectType: 'Web Application',
     message: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Create mailto link with form data
-    const subject = `New Project Inquiry - ${formData.projectType}`;
-    const body = `
-New project inquiry from ${formData.firstName} ${formData.lastName}
-
-Email: ${formData.email}
-Project Type: ${formData.projectType}
-
-Message:
-${formData.message}
-    `.trim();
-
-    const mailtoLink = `mailto:${contactInfo.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoLink;
-
-    // Reset form
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      projectType: 'Web Application',
-      message: ''
+    contactMutation.mutate(formData, {
+      onSuccess: () => {
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          message: ''
+        });
+      }
     });
   };
 
@@ -107,27 +94,15 @@ ${formData.message}
             <form onSubmit={handleSubmit} className="glass rounded-2xl p-8 border border-primary/10 hover-lift space-y-6">
               <h3 className="text-2xl font-bold mb-6">Start Your Project</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">First Name</label>
-                  <Input 
-                    value={formData.firstName}
-                    onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                    placeholder="John" 
-                    className="border-primary/20 focus:border-primary" 
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Last Name</label>
-                  <Input 
-                    value={formData.lastName}
-                    onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                    placeholder="Doe" 
-                    className="border-primary/20 focus:border-primary" 
-                    required
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Full Name</label>
+                <Input 
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  placeholder="John Doe" 
+                  className="border-primary/20 focus:border-primary" 
+                  required
+                />
               </div>
 
               <div>
@@ -143,22 +118,6 @@ ${formData.message}
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Project Type</label>
-                <select 
-                  value={formData.projectType}
-                  onChange={(e) => setFormData({...formData, projectType: e.target.value})}
-                  className="w-full px-3 py-2 border border-primary/20 rounded-lg focus:border-primary focus:outline-none bg-background"
-                >
-                  <option>Web Application</option>
-                  <option>Business Website</option>
-                  <option>E-commerce Store</option>
-                  <option>Web Game</option>
-                  <option>Hosting & Maintenance</option>
-                  <option>Other</option>
-                </select>
-              </div>
-
-              <div>
                 <label className="block text-sm font-medium mb-2">Project Description</label>
                 <Textarea 
                   value={formData.message}
@@ -170,8 +129,12 @@ ${formData.message}
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 text-lg">
-                Send Message
+              <Button 
+                type="submit" 
+                disabled={contactMutation.isPending}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 text-lg"
+              >
+                {contactMutation.isPending ? 'Sending...' : 'Send Message'}
               </Button>
             </form>
           </div>
