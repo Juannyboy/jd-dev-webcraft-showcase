@@ -1,10 +1,31 @@
 
 import React, { useState, useRef } from 'react';
 import { Globe, Code, Gamepad2, Server } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ServicesShowcase = () => {
   const [activeService, setActiveService] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const handleServiceClick = (index: number) => {
+    switch (index) {
+      case 0: // Website Creation
+        navigate('/website-creation');
+        break;
+      case 1: // Web Applications
+        navigate('/web-applications');
+        break;
+      case 2: // Web Based Games
+        navigate('/web-games');
+        break;
+      case 3: // Hosting & Maintenance
+        document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+        break;
+      default:
+        break;
+    }
+  };
 
   const services = [
     {
@@ -12,28 +33,32 @@ const ServicesShowcase = () => {
       description: 'Custom websites that captivate and convert visitors into customers.',
       icon: Globe,
       color: 'mint-400',
-      gradient: 'from-mint-400 to-mint-600'
+      gradient: 'from-mint-400 to-mint-600',
+      action: 'View Websites'
     },
     {
       title: 'Web Applications',
       description: 'Powerful web apps that streamline your business operations.',
       icon: Code,
       color: 'mint-500',
-      gradient: 'from-mint-500 to-mint-700'
+      gradient: 'from-mint-500 to-mint-700',
+      action: 'View Apps'
     },
     {
       title: 'Web Based Games',
       description: 'Immersive gaming experiences that engage and entertain.',
       icon: Gamepad2,
       color: 'mint-600',
-      gradient: 'from-mint-600 to-mint-800'
+      gradient: 'from-mint-600 to-mint-800',
+      action: 'View Games'
     },
     {
       title: 'Hosting & Maintenance',
       description: 'Reliable hosting and ongoing support to keep you running smoothly.',
       icon: Server,
       color: 'mint-300',
-      gradient: 'from-mint-300 to-mint-500'
+      gradient: 'from-mint-300 to-mint-500',
+      action: 'Get Quote'
     }
   ];
 
@@ -68,6 +93,7 @@ const ServicesShowcase = () => {
                   }`}
                   onMouseEnter={() => setActiveService(index)}
                   onMouseLeave={() => setActiveService(null)}
+                  onClick={() => handleServiceClick(index)}
                   style={{
                     transform: isActive 
                       ? 'rotateX(5deg) rotateY(5deg) translateZ(20px)' 
@@ -117,9 +143,21 @@ const ServicesShowcase = () => {
                       `}>
                         {service.title}
                       </h3>
-                      <p className="text-muted-foreground leading-relaxed">
+                      <p className="text-muted-foreground leading-relaxed mb-6">
                         {service.description}
                       </p>
+                      
+                      {/* Action button */}
+                      <div className={`
+                        inline-flex items-center gap-2 px-6 py-3 rounded-xl
+                        bg-gradient-to-r ${service.gradient} text-white font-medium
+                        transform transition-all duration-300
+                        ${isActive ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}
+                        group-hover:translate-y-0 group-hover:opacity-100
+                      `}>
+                        <span>{service.action}</span>
+                        <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse" />
+                      </div>
                     </div>
 
                     {/* Interactive glow effect */}
