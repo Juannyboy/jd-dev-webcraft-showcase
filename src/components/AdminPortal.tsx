@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Plus, Edit, Trash, Save, X, ExternalLink, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useData } from '@/contexts/DataContext';
 import { Project } from '@/hooks/useProjects';
+import ImageUpload from './ImageUpload';
 
 const AdminPortal = () => {
   const { projects, contactInfo, addProject, updateProject, deleteProject, updateContactInfo } = useData();
@@ -69,11 +69,22 @@ const AdminPortal = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
+      
+      // Validate that image is uploaded
+      if (!formData.image) {
+        alert('Please upload an image for the project');
+        return;
+      }
+      
       const updatedProject = {
         ...formData,
         technologies: tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag)
       };
       onSave(updatedProject);
+    };
+
+    const handleImageChange = (imageUrl: string) => {
+      setFormData({ ...formData, image: imageUrl });
     };
 
     return (
@@ -103,15 +114,10 @@ const AdminPortal = () => {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Image URL</label>
-              <Input
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                placeholder="https://example.com/image.jpg"
-                required
-              />
-            </div>
+            <ImageUpload
+              currentImage={formData.image}
+              onImageChange={handleImageChange}
+            />
 
             <div>
               <label className="block text-sm font-medium mb-1">Live URL (optional)</label>
