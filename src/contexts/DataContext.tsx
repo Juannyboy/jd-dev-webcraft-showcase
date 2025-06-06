@@ -103,7 +103,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     mutationFn: async (newContactInfo: ContactInfo) => {
       const { error } = await supabase
         .from('website_settings')
-        .update({ setting_value: newContactInfo })
+        .update({ setting_value: newContactInfo as any })
         .eq('setting_key', 'contact_info');
       
       if (error) throw error;

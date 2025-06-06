@@ -15,21 +15,21 @@ const AdminPortal = () => {
   const [showContactEdit, setShowContactEdit] = useState(false);
   const [contactFormData, setContactFormData] = useState(contactInfo);
 
-  const emptyProject = {
+  const emptyProject: Omit<Project, 'id' | 'created_at' | 'updated_at'> = {
     title: '',
     description: '',
     image: '',
     live_url: '',
     github_url: '',
     technologies: [],
-    category: 'web-app' as const,
+    category: 'web-app',
     featured: false
   };
 
   const handleSave = async (project: Project | typeof emptyProject) => {
     try {
       if (isCreating) {
-        await addProject(project);
+        await addProject(project as Omit<Project, 'id' | 'created_at' | 'updated_at'>);
         setIsCreating(false);
       } else {
         await updateProject(project as Project);
@@ -199,7 +199,7 @@ const AdminPortal = () => {
             </Button>
             <Button 
               onClick={() => {
-                setEditingProject(emptyProject);
+                setEditingProject(emptyProject as any);
                 setIsCreating(true);
               }}
               className="bg-primary hover:bg-primary/90"
