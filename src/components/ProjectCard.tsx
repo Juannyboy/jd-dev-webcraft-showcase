@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ExternalLink, Code, Monitor } from 'lucide-react';
+import { ExternalLink, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -94,28 +94,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           ))}
         </div>
 
-        {/* Action buttons */}
+        {/* Action button - only live preview */}
         <div className="flex gap-2">
           {project.liveUrl && (
             <Button 
               variant="outline" 
               size="sm"
-              className="flex-1 border-primary/30 hover:bg-primary/5"
+              className="w-full border-primary/30 hover:bg-primary/5"
               onClick={() => window.open(project.liveUrl, '_blank')}
             >
               <Monitor className="w-4 h-4 mr-1" />
               View Live
-            </Button>
-          )}
-          {project.codeUrl && (
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="flex-1 border-primary/30 hover:bg-primary/5"
-              onClick={() => window.open(project.codeUrl, '_blank')}
-            >
-              <Code className="w-4 h-4 mr-1" />
-              Source
             </Button>
           )}
         </div>

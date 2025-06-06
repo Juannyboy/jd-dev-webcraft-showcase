@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
-import { Plus, Edit, Trash, Save, X, ExternalLink } from 'lucide-react';
+import { Plus, Edit, Trash, Save, X, ExternalLink, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { useData } from '@/contexts/DataContext';
 
 interface Project {
   id: string;
@@ -18,21 +19,11 @@ interface Project {
 }
 
 const AdminPortal = () => {
-  const [projects, setProjects] = useState<Project[]>([
-    {
-      id: '1',
-      title: 'E-Commerce Platform',
-      description: 'A modern, responsive e-commerce solution with advanced filtering, cart management, and secure payment integration.',
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80',
-      liveUrl: 'https://demo-ecommerce.com',
-      codeUrl: 'https://github.com/jd-dev/ecommerce',
-      tags: ['React', 'TypeScript', 'Stripe', 'Tailwind'],
-      type: 'web-app'
-    }
-  ]);
-  
+  const { projects, contactInfo, addProject, updateProject, deleteProject, updateContactInfo } = useData();
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [showContactEdit, setShowContactEdit] = useState(false);
+  const [contactFormData, setContactFormData] = useState(contactInfo);
 
   const emptyProject: Project = {
     id: '',
@@ -48,18 +39,23 @@ const AdminPortal = () => {
   const handleSave = (project: Project) => {
     if (isCreating) {
       const newProject = { ...project, id: Date.now().toString() };
-      setProjects([...projects, newProject]);
+      addProject(newProject);
       setIsCreating(false);
     } else {
-      setProjects(projects.map(p => p.id === project.id ? project : p));
+      updateProject(project);
       setEditingProject(null);
     }
   };
 
   const handleDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
-      setProjects(projects.filter(p => p.id !== id));
+      deleteProject(id);
     }
+  };
+
+  const handleContactSave = () => {
+    updateContactInfo(contactFormData);
+    setShowContactEdit(false);
   };
 
   const ProjectForm = ({ project, onSave, onCancel }: { 
@@ -126,15 +122,6 @@ const AdminPortal = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Code URL (optional)</label>
-              <Input
-                value={formData.codeUrl}
-                onChange={(e) => setFormData({ ...formData, codeUrl: e.target.value })}
-                placeholder="https://github.com/user/repo"
-              />
-            </div>
-
-            <div>
               <label className="block text-sm font-medium mb-1">Project Type</label>
               <select
                 value={formData.type}
@@ -178,18 +165,28 @@ const AdminPortal = () => {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gradient-mint">JD Development Admin</h1>
-            <p className="text-muted-foreground">Manage your portfolio projects</p>
+            <p className="text-muted-foreground">Manage your portfolio projects and contact information</p>
           </div>
-          <Button 
-            onClick={() => {
-              setEditingProject(emptyProject);
-              setIsCreating(true);
-            }}
-            className="bg-primary hover:bg-primary/90"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Project
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setShowContactEdit(true)}
+              className="border-primary/30 hover:bg-primary/5"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Contact Info
+            </Button>
+            <Button 
+              onClick={() => {
+                setEditingProject(emptyProject);
+                setIsCreating(true);
+              }}
+              className="bg-primary hover:bg-primary/90"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Project
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -254,6 +251,56 @@ const AdminPortal = () => {
             </div>
           ))}
         </div>
+
+        {/* Contact Edit Modal */}
+        {showContactEdit && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-card rounded-lg p-6 w-full max-w-md">
+              <h3 className="text-xl font-bold mb-4">Edit Contact Information</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Email</label>
+                  <Input
+                    value={contactFormData.email}
+                    onChange={(e) => setContactFormData({ ...contactFormData, email: e.target.value })}
+                    type="email"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">Phone</label>
+                  <Input
+                    value={contactFormData.phone}
+                    onChange={(e) => setContactFormData({ ...contactFormData, phone: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">Address</label>
+                  <Input
+                    value={contactFormData.address}
+                    onChange={(e) => setContactFormData({ ...contactFormData, address: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="flex gap-2 pt-4">
+                  <Button onClick={handleContactSave} className="flex-1">
+                    <Save className="w-4 h-4 mr-2" />
+                    Save
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowContactEdit(false)}>
+                    <X className="w-4 h-4 mr-2" />
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {(editingProject || isCreating) && (
           <ProjectForm
