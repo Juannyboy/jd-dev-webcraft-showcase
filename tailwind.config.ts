@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// JD Development mint color palette
+				mint: {
+					50: 'hsl(var(--mint-50))',
+					100: 'hsl(var(--mint-100))',
+					200: 'hsl(var(--mint-200))',
+					300: 'hsl(var(--mint-300))',
+					400: 'hsl(var(--mint-400))',
+					500: 'hsl(var(--mint-500))',
+					600: 'hsl(var(--mint-600))',
+					700: 'hsl(var(--mint-700))',
+					800: 'hsl(var(--mint-800))',
+					900: 'hsl(var(--mint-900))',
 				}
 			},
 			borderRadius: {
@@ -84,11 +98,50 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				// JD Development custom animations
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0px) rotate(0deg)'
+					},
+					'50%': {
+						transform: 'translateY(-20px) rotate(5deg)'
+					}
+				},
+				'rotate-slow': {
+					from: {
+						transform: 'rotate(0deg)'
+					},
+					to: {
+						transform: 'rotate(360deg)'
+					}
+				},
+				'pulse-mint': {
+					'0%, 100%': {
+						boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)'
+					},
+					'50%': {
+						boxShadow: '0 0 0 20px rgba(16, 185, 129, 0)'
+					}
+				},
+				'fade-in-up': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(30px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 6s ease-in-out infinite',
+				'rotate-slow': 'rotate-slow 20s linear infinite',
+				'pulse-mint': 'pulse-mint 2s ease-in-out infinite',
+				'fade-in-up': 'fade-in-up 0.8s ease-out forwards'
 			}
 		}
 	},
