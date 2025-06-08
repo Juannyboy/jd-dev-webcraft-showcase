@@ -1,12 +1,15 @@
+
 import React, { useState } from 'react';
-import { Plus, Edit, Trash, Save, X, ExternalLink, Settings } from 'lucide-react';
+import { Plus, Edit, Trash, Save, X, ExternalLink, Settings, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useData } from '@/contexts/DataContext';
 import { Project } from '@/hooks/useProjects';
 import ImageUpload from './ImageUpload';
+import ContactSubmissions from './ContactSubmissions';
 
 const AdminPortal = () => {
   const { projects, contactInfo, addProject, updateProject, deleteProject, updateContactInfo } = useData();
@@ -216,68 +219,84 @@ const AdminPortal = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {projects.map((project) => (
-            <div key={project.id} className="bg-card rounded-lg overflow-hidden border">
-              <img 
-                src={project.image} 
-                alt={project.title}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-lg">{project.title}</h3>
-                  <Badge variant="outline" className="text-xs">
-                    {project.category}
-                  </Badge>
-                </div>
-                
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                  {project.description}
-                </p>
+        <Tabs defaultValue="projects" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="projects">Projects</TabsTrigger>
+            <TabsTrigger value="submissions">
+              <Mail className="w-4 h-4 mr-2" />
+              Contact Submissions
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="projects">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {projects.map((project) => (
+                <div key={project.id} className="bg-card rounded-lg overflow-hidden border">
+                  <img 
+                    src={project.image} 
+                    alt={project.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-bold text-lg">{project.title}</h3>
+                      <Badge variant="outline" className="text-xs">
+                        {project.category}
+                      </Badge>
+                    </div>
+                    
+                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                      {project.description}
+                    </p>
 
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {project.technologies.slice(0, 3).map((tag) => (
-                    <Badge key={tag} variant="secondary" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                  {project.technologies.length > 3 && (
-                    <Badge variant="secondary" className="text-xs">
-                      +{project.technologies.length - 3}
-                    </Badge>
-                  )}
-                </div>
+                    <div className="flex flex-wrap gap-1 mb-4">
+                      {project.technologies.slice(0, 3).map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                      {project.technologies.length > 3 && (
+                        <Badge variant="secondary" className="text-xs">
+                          +{project.technologies.length - 3}
+                        </Badge>
+                      )}
+                    </div>
 
-                <div className="flex gap-2">
-                  {project.live_url && (
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={() => window.open(project.live_url, '_blank')}
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                    </Button>
-                  )}
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => setEditingProject(project)}
-                  >
-                    <Edit className="w-3 h-3" />
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => handleDelete(project.id)}
-                  >
-                    <Trash className="w-3 h-3" />
-                  </Button>
+                    <div className="flex gap-2">
+                      {project.live_url && (
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => window.open(project.live_url, '_blank')}
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                        </Button>
+                      )}
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => setEditingProject(project)}
+                      >
+                        <Edit className="w-3 h-3" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleDelete(project.id)}
+                      >
+                        <Trash className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </TabsContent>
+          
+          <TabsContent value="submissions">
+            <ContactSubmissions />
+          </TabsContent>
+        </Tabs>
 
         {/* Contact Edit Modal */}
         {showContactEdit && (
