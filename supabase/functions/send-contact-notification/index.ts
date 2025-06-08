@@ -3,8 +3,6 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.0'
 import { Resend } from 'npm:resend@2.0.0'
 
-const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -26,6 +24,17 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    console.log("Edge function called - checking API key...");
+    const apiKey = Deno.env.get('RESEND_API_KEY');
+    console.log("API key exists:", !!apiKey);
+    console.log("API key length:", apiKey ? apiKey.length : 0);
+    
+    if (!apiKey) {
+      throw new Error("RESEND_API_KEY is not set in environment variables");
+    }
+
+    const resend = new Resend(apiKey);
+
     const { submission_id, name, email, message, created_at }: ContactSubmission = await req.json();
 
     console.log("Received contact submission notification:", { submission_id, name, email });
