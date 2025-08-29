@@ -10,7 +10,7 @@ export interface Project {
   live_url?: string;
   github_url?: string;
   technologies: string[];
-  category: 'web-app' | 'website' | 'web-game';
+  category: 'web-app' | 'website' | 'web-game' | 'software';
   featured: boolean;
   created_at: string;
   updated_at: string;

@@ -1,206 +1,90 @@
 
-import React, { useState, useRef } from 'react';
-import { Globe, Code, Gamepad2, Server } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Code, Globe, Gamepad2, Monitor, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ServicesShowcase = () => {
-  const [activeService, setActiveService] = useState<number | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-
-  const handleServiceClick = (index: number) => {
-    switch (index) {
-      case 0: // Website Creation
-        navigate('/website-creation');
-        break;
-      case 1: // Web Applications
-        navigate('/web-applications');
-        break;
-      case 2: // Web Based Games
-        navigate('/web-games');
-        break;
-      case 3: // Hosting & Maintenance
-        document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-        break;
-      default:
-        break;
-    }
-  };
-
   const services = [
     {
-      title: 'Website Creation',
-      description: 'Custom websites that captivate and convert visitors into customers.',
-      icon: Globe,
-      color: 'mint-400',
-      gradient: 'from-mint-400 to-mint-600',
-      action: 'View Websites'
-    },
-    {
-      title: 'Web Applications',
-      description: 'Powerful web apps that streamline your business operations.',
       icon: Code,
-      color: 'mint-500',
-      gradient: 'from-mint-500 to-mint-700',
-      action: 'View Apps'
+      title: "Web Applications",
+      description: "Full-stack web applications with modern frameworks and cloud deployment",
+      features: ["React & TypeScript", "Node.js Backend", "Database Integration", "Cloud Hosting"],
+      link: "/web-applications",
+      gradient: "from-mint-500 to-mint-700"
     },
     {
-      title: 'Web Based Games',
-      description: 'Immersive gaming experiences that engage and entertain.',
+      icon: Globe,
+      title: "Website Creation",
+      description: "Professional websites that convert visitors into customers",
+      features: ["Responsive Design", "SEO Optimized", "Fast Loading", "CMS Integration"],
+      link: "/website-creation", 
+      gradient: "from-mint-400 to-mint-600"
+    },
+    {
       icon: Gamepad2,
-      color: 'mint-600',
-      gradient: 'from-mint-600 to-mint-800',
-      action: 'View Games'
+      title: "Web Games",
+      description: "Interactive gaming experiences that engage and entertain users",
+      features: ["HTML5 Games", "Mobile Friendly", "Leaderboards", "Social Features"],
+      link: "/web-games",
+      gradient: "from-mint-600 to-mint-800"
     },
     {
-      title: 'Hosting & Maintenance',
-      description: 'Reliable hosting and ongoing support to keep you running smoothly.',
-      icon: Server,
-      color: 'mint-300',
-      gradient: 'from-mint-300 to-mint-500',
-      action: 'Get Quote'
+      icon: Monitor,
+      title: "Software Development",
+      description: "Desktop and mobile applications for business automation",
+      features: ["Cross-Platform", "Database Integration", "User Management", "API Development"],
+      link: "/software-development",
+      gradient: "from-mint-700 to-mint-900"
     }
   ];
 
   return (
-    <section className="py-20 px-6 bg-gradient-to-br from-background via-primary/5 to-background overflow-hidden">
-      <div className="container mx-auto">
+    <section id="services" className="py-20 bg-gradient-to-b from-background to-primary/5">
+      <div className="container mx-auto px-6">
         <div className="text-center mb-16 fade-in-up">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
+          <h2 className="text-3xl md:text-5xl font-bold mb-6">
             Our <span className="text-gradient-mint">Services</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Comprehensive web development solutions tailored to bring your digital vision to life.
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Comprehensive digital solutions to transform your business and engage your audience
           </p>
         </div>
 
-        <div 
-          ref={containerRef}
-          className="relative max-w-6xl mx-auto"
-          style={{ perspective: '1000px' }}
-        >
-          {/* 3D Grid Container */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-            {services.map((service, index) => {
-              const Icon = service.icon;
-              const isActive = activeService === index;
-              
-              return (
-                <div
-                  key={index}
-                  className={`relative group cursor-pointer transition-all duration-500 transform-3d ${
-                    isActive ? 'scale-105 z-10' : 'hover:scale-102'
-                  }`}
-                  onMouseEnter={() => setActiveService(index)}
-                  onMouseLeave={() => setActiveService(null)}
-                  onClick={() => handleServiceClick(index)}
-                  style={{
-                    transform: isActive 
-                      ? 'rotateX(5deg) rotateY(5deg) translateZ(20px)' 
-                      : 'rotateX(0deg) rotateY(0deg) translateZ(0px)',
-                    animationDelay: `${index * 0.2}s`
-                  }}
-                >
-                  {/* 3D Card */}
-                  <div className={`
-                    relative glass rounded-2xl p-8 border border-primary/20 
-                    transition-all duration-500 hover-lift
-                    ${isActive ? 'border-primary/40 shadow-2xl' : ''}
-                  `}>
-                    {/* Floating Icon */}
-                    <div className={`
-                      relative mb-6 w-20 h-20 mx-auto
-                      transition-all duration-500
-                      ${isActive ? 'transform scale-110 rotate-12' : 'transform scale-100 rotate-0'}
-                    `}>
-                      <div className={`
-                        w-full h-full rounded-2xl bg-gradient-to-br ${service.gradient}
-                        flex items-center justify-center
-                        shadow-lg transition-all duration-500
-                        ${isActive ? 'shadow-primary/30' : 'shadow-primary/10'}
-                      `}>
-                        <Icon className="w-10 h-10 text-white" />
-                      </div>
-                      
-                      {/* Floating particles */}
-                      {isActive && (
-                        <>
-                          <div className="absolute -top-2 -right-2 w-3 h-3 bg-primary/60 rounded-full animate-bounce" 
-                               style={{ animationDelay: '0.1s' }} />
-                          <div className="absolute -bottom-2 -left-2 w-2 h-2 bg-primary/40 rounded-full animate-bounce" 
-                               style={{ animationDelay: '0.3s' }} />
-                          <div className="absolute top-1/2 -right-3 w-1.5 h-1.5 bg-primary/50 rounded-full animate-bounce" 
-                               style={{ animationDelay: '0.5s' }} />
-                        </>
-                      )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="text-center">
-                      <h3 className={`
-                        text-2xl font-bold mb-4 transition-colors duration-300
-                        ${isActive ? 'text-primary' : 'text-card-foreground'}
-                      `}>
-                        {service.title}
-                      </h3>
-                      <p className="text-muted-foreground leading-relaxed mb-6">
-                        {service.description}
-                      </p>
-                      
-                      {/* Action button */}
-                      <div className={`
-                        inline-flex items-center gap-2 px-6 py-3 rounded-xl
-                        bg-gradient-to-r ${service.gradient} text-white font-medium
-                        transform transition-all duration-300
-                        ${isActive ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}
-                        group-hover:translate-y-0 group-hover:opacity-100
-                      `}>
-                        <span>{service.action}</span>
-                        <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse" />
-                      </div>
-                    </div>
-
-                    {/* Interactive glow effect */}
-                    <div className={`
-                      absolute inset-0 rounded-2xl transition-opacity duration-500
-                      bg-gradient-to-br ${service.gradient} opacity-0
-                      ${isActive ? 'opacity-5' : 'group-hover:opacity-3'}
-                    `} />
-
-                    {/* 3D depth indicators */}
-                    <div className={`
-                      absolute -bottom-1 -right-1 w-full h-full rounded-2xl 
-                      bg-gradient-to-br ${service.gradient} opacity-10 -z-10
-                      transition-all duration-500
-                      ${isActive ? 'transform translate-x-2 translate-y-2' : 'transform translate-x-1 translate-y-1'}
-                    `} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Background 3D elements */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-10 left-10 w-32 h-32 bg-primary/5 rounded-full blur-xl float-animation" />
-            <div className="absolute bottom-20 right-20 w-24 h-24 bg-primary/10 rounded-full blur-lg float-animation" 
-                 style={{ animationDelay: '2s' }} />
-            <div className="absolute top-1/3 right-1/4 w-6 h-6 border border-primary/30 rotate-slow" />
-          </div>
-        </div>
-
-        {/* Call to action */}
-        <div className="text-center mt-16">
-          <div className="inline-flex items-center gap-4 px-8 py-4 bg-primary/10 rounded-2xl border border-primary/20 glass">
-            <div className="w-3 h-3 bg-primary rounded-full pulse-mint"></div>
-            <span className="text-primary font-medium">Ready to start your project?</span>
-            <button 
-              className="text-primary hover:text-primary/80 font-semibold transition-colors"
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {services.map((service, index) => (
+            <Link
+              key={service.title}
+              to={service.link}
+              className="group bg-card/50 backdrop-blur-sm rounded-2xl p-8 border border-border/50 hover:border-primary/20 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 fade-in-up"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              Get Started →
-            </button>
-          </div>
+              <div className="flex items-center gap-4 mb-6">
+                <div className={`w-16 h-16 bg-gradient-to-br ${service.gradient} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                  <service.icon className="w-8 h-8 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors">
+                    {service.title}
+                  </h3>
+                </div>
+                <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+              </div>
+
+              <p className="text-muted-foreground mb-6 leading-relaxed">
+                {service.description}
+              </p>
+
+              <div className="grid grid-cols-2 gap-3">
+                {service.features.map((feature) => (
+                  <div key={feature} className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                    <span className="text-sm text-muted-foreground">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>

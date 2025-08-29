@@ -150,6 +150,7 @@ const AdminPortal = () => {
                 <option value="web-app">Web Application</option>
                 <option value="website">Website</option>
                 <option value="web-game">Web Game</option>
+                <option value="software">Software Application</option>
               </select>
             </div>
 
